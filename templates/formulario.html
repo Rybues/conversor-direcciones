@@ -1,13 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Dirección a URL de Google Maps</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor de Direcciones a Coordenadas</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <h2>Ingresa las direcciones (una por línea):</h2>
-    <form method="POST" action="/direccion-a-coordenadas">
-        <textarea name="direcciones" rows="10" cols="50"></textarea><br>
-        <button type="submit">Obtener URLs</button>
+    <h1>Conversor de Direcciones a Coordenadas</h1>
+    <form id="form-direcciones" method="POST">
+        <label for="direcciones">Introduce las direcciones (una por línea):</label><br>
+        <textarea id="direcciones" name="direcciones" rows="5" cols="50"></textarea><br><br>
+        <button type="submit">Convertir a Coordenadas</button>
     </form>
+
+    <div id="resultados" style="margin-top: 20px;">
+        <!-- Los resultados se mostrarán aquí -->
+    </div>
+
+    <script>
+        // Cuando se envíe el formulario
+        $('#form-direcciones').on('submit', function(e) {
+            e.preventDefault();  // Evita que el formulario se envíe de la forma tradicional
+
+            var direcciones = $('#direcciones').val();  // Obtiene las direcciones ingresadas
+
+            $.ajax({
+                url: '/direccion-a-coordenadas',
+                type: 'POST',
+                data: {
+                    direcciones: direcciones
+                },
+                success: function(response) {
+                    // Mostrar los resultados en la misma página
+                    var resultadosHtml = '<table border="1"><tr><th>Dirección</th><th>URL</th><th>Latitud</th><th>Longitud</th></tr>';
+                    response.forEach(function(item) {
+                        resultadosHtml += '<tr><td>' + item.direccion + '</td><td>' + item.url + '</td><td>' + item.lat + '</td><td>' + item.lon + '</td></tr>';
+                    });
+                    resultadosHtml += '</table>';
+                    $('#resultados').html(resultadosHtml);  // Inserta los resultados en el div
+                },
+                error: function(error) {
+                    $('#resultados').html('<p>Error al procesar las direcciones.</p>');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
