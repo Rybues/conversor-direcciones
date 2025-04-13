@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: conversor-direcciones
+    env: python
+    buildCommand: ""
+    startCommand: python app.py
+    envVars:
+      - key: LOCAL_MODE
+        value: "1"
